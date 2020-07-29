@@ -1,0 +1,3 @@
+displayName = Talismancy Class
+author = TheMysticalBard
+version = 0.1
