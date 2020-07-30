@@ -29,6 +29,8 @@ namespace Talismancy.Items
             item.noUseGraphic = true;
             //We also don't want any damage hitboxes on the animation, just the projectile.
             item.noMelee = true;
+            //All talismans are thrown so we want the hand throwing them.
+            item.useStyle = ItemUseStyleID.SwingThrow;
 		}
 
         public override void ModifyWeaponDamage(Terraria.Player player, ref float add, ref float mult, ref float flat)
@@ -58,10 +60,17 @@ namespace Talismancy.Items
                 line.text = damage + " curse " + localText;
             }
 
+            //Add a tooltip letting the player know how many slots each curse uses.
             if(curseSlots > 1)
             {
                 tooltips.Add(new TooltipLine(mod, "Curse Slot Useage", $"Uses {curseSlots} slots per curse"));
             }
+        }
+
+        //Every talisman should have an alt fire for bosses.
+        public override bool AltFunctionUse(Terraria.Player player)
+        {
+            return true;
         }
     }
 }
