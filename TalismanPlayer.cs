@@ -14,5 +14,7 @@ namespace Talismancy
         public int curseSlotsMax = 3;
         //Some armor sets or accessories will multiply slots. This is to encourage using items that require more slots.
         public int curseSlotMult = 1;
+
+        public int maxTraps = 10;
     }
 }

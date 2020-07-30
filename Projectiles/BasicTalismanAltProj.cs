@@ -8,6 +8,6 @@ namespace Talismancy.Projectiles
 {
     class BasicTalismanAltProj : TalismanBaseAltProj
     {
-
+        public bool activeTrap = false;
     }
 }

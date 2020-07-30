@@ -11,6 +11,7 @@ namespace Talismancy.Items
 	public class TalismanBaseItem : ModItem
 	{
         public override bool CloneNewInstances => true;
+        //How many curse slots each curse takes up. Most weapons will keep this low.
         public int curseSlots = 1;
 
         public virtual void SafeSetDefaults()
