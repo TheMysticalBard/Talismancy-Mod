@@ -9,7 +9,11 @@ namespace Talismancy.Items
     {
         public override void SafeSetDefaults()
         {
-
+            item.damage = 999;
+            item.crit = 15;
+            item.useTime = 20;
+            item.useAnimation = 20;
+            item.shootSpeed = 10f;
         }
 
         public override bool CanUseItem(Player player)
