@@ -1,4 +1,6 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
 using Terraria.ModLoader;
 
 namespace Talismancy.Projectiles
@@ -76,6 +78,11 @@ namespace Talismancy.Projectiles
         public override void Kill(int timeLeft)
         {
             activeTrap = false;
+        }
+
+        public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
+
         }
     }
 }
