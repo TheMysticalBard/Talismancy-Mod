@@ -7,7 +7,7 @@ namespace Talismancy.Projectiles
     {
         public override void SetStaticDefaults()
         {
-            Main.projFrames[projectile.type] = 8;
+            Main.projFrames[projectile.type] = 18;
         }
 
         public override void SetDefaults()
@@ -18,6 +18,10 @@ namespace Talismancy.Projectiles
             projectile.friendly = true;
             //A value of 1 means the AI is currently flying, a value of 2 means it is a readied trap.
             projectile.ai[1] = 1;
+
+            drawOffsetX = -22;
+            drawOriginOffsetX = 14;
+            drawOriginOffsetY = -2;
         }
 
         public override void AI()
@@ -26,19 +30,19 @@ namespace Talismancy.Projectiles
             {
                 //Movement
                 projectile.ai[0] += 1;
-                if (projectile.ai[0] >= 10)
+                if (projectile.ai[0] >= 20)
                 {
                     projectile.ai[0] = 10;
-                    projectile.velocity.Y += 0.05f;
+                    projectile.velocity.Y += 0.1f;
                 }
-                projectile.velocity.X *= 1.01f;
+
+                if (projectile.velocity.Y >= 20f)
+                {
+                    projectile.velocity.Y = 20f;
+                }
 
                 //Animation
-                if (++projectile.frameCounter >= 2)
-                {
-                    projectile.frameCounter = 0;
-                    projectile.frame = ++projectile.frame % Main.projFrames[projectile.type];
-                }
+                projectile.frame = ++projectile.frame % Main.projFrames[projectile.type];
 
                 //Making sure projectile is facing correct direction
                 projectile.rotation = projectile.velocity.ToRotation();
@@ -66,6 +70,11 @@ namespace Talismancy.Projectiles
             //TODO: Apply curse to hit NPC. If trap hasn't been active long, light curse. (Rewards more anticipatory trap placement)
 
             //Make it so when an active trap hits an NPC it becomes inactive, so the player may spawn more traps.
+            activeTrap = false;
+        }
+
+        public override void Kill(int timeLeft)
+        {
             activeTrap = false;
         }
     }

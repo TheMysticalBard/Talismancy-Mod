@@ -7,7 +7,7 @@ namespace Talismancy.Projectiles
     {
         public override void SetStaticDefaults()
         {
-            Main.projFrames[projectile.type] = 8;
+            Main.projFrames[projectile.type] = 18;
         }
 
         public override void SetDefaults()
@@ -16,6 +16,9 @@ namespace Talismancy.Projectiles
             projectile.width = 10;
             projectile.height = 10;
             projectile.friendly = true;
+            drawOffsetX = -22;
+            drawOriginOffsetX = 14;
+            drawOriginOffsetY = -2;
         }
 
         public override void AI()
@@ -27,18 +30,14 @@ namespace Talismancy.Projectiles
                 projectile.ai[0] = 10;
                 projectile.velocity.Y += 0.1f;
             }
-            projectile.velocity.X *= projectile.velocity.Y < -1f || projectile.ai[0] < 20 ? 1.01f : 1.0f;
+
             if(projectile.velocity.Y >= 20f)
             {
                 projectile.velocity.Y = 20f;
             }
 
             //Animation
-            if(++projectile.frameCounter >= 2)
-            {
-                projectile.frameCounter = 0;
-                projectile.frame = ++projectile.frame % Main.projFrames[projectile.type];
-            }
+            projectile.frame = ++projectile.frame % Main.projFrames[projectile.type];
 
             //Making sure projectile is facing correct direction
             projectile.rotation = projectile.velocity.ToRotation();

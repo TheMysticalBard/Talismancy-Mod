@@ -13,7 +13,7 @@ namespace Talismancy.Items
             item.crit = 15;
             item.useTime = 20;
             item.useAnimation = 20;
-            item.shootSpeed = 10f;
+            item.shootSpeed = 12f;
         }
 
         public override bool CanUseItem(Player player)
@@ -34,7 +34,7 @@ namespace Talismancy.Items
             //This next bit is to prevent the player from spawning too many traps and to make sure they can activate traps, so we only want to active it if the projectile being shot is the trap.
             if(type == ModContent.ProjectileType<BasicTalismanAltProj>())
             {
-                //It's bad practice to use foreach since Main.projectile can be arbitratily large, I think.
+                //It's bad practice to use foreach since Main.projectile contains a dummy 1001st slot that should never be iterated over, according to tModLoader developers!
                 /*foreach (Projectile proj in Main.projectile)
                 {
                     if(proj.type == type)
@@ -43,34 +43,26 @@ namespace Talismancy.Items
                     }
                 }*/
 
-                //Counter for the amount of traps we have
-                int trapCount = 0;
-
                 //Search all projectiles for the alternate, if it exists and is NOT a trap, cancel new projectile and turn old one into trap.
                 for (int i = 0; i < 1000; i++)
                 {
-                    if(Main.projectile[i].type == type)
+                    if (Main.projectile[i].type == type)
                     {
                         BasicTalismanAltProj customProj = Main.projectile[i].modProjectile as BasicTalismanAltProj;
-                        if(customProj != null)
+
+                        if (customProj != null)
                         {
-                            if(customProj.activeTrap)
-                            {
-                                trapCount++;
-                            }
-                            else
+                            if (!customProj.activeTrap && Main.projectile[i].active)
                             {
                                 customProj.activeTrap = true;
-                                return false;
-                            }
-
-                            if(trapCount == player.GetModPlayer<TalismanPlayer>().maxTraps)
-                            {
                                 return false;
                             }
                         }
                     }
                 }
+                //This is an easy way to handle the not being able to shoot more than the maximum number of traps.
+                if (player.ownedProjectileCounts[ModContent.ProjectileType<BasicTalismanAltProj>()] >= player.GetModPlayer<TalismanPlayer>().maxTraps)
+                    return false;
             }
             return true;
         }
