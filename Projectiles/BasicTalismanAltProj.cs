@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -7,6 +8,8 @@ namespace Talismancy.Projectiles
 {
     class BasicTalismanAltProj : TalismanBaseAltProj
     {
+        //This is how many frames are in the sprite that correspond to it's movement. The rest are for flipping over once the trap has been activated.
+        private const int _mainFrames = 18;
         public override void SetStaticDefaults()
         {
             Main.projFrames[projectile.type] = 18;
@@ -32,19 +35,21 @@ namespace Talismancy.Projectiles
             {
                 //Movement
                 projectile.ai[0] += 1;
+                //Isn't affected by gravity for the first 20 frames, to better hit ground targets from the ground.
                 if (projectile.ai[0] >= 20)
                 {
                     projectile.ai[0] = 10;
                     projectile.velocity.Y += 0.1f;
                 }
 
+                //Clamp vertical velocity.
                 if (projectile.velocity.Y >= 20f)
                 {
                     projectile.velocity.Y = 20f;
                 }
 
                 //Animation
-                projectile.frame = ++projectile.frame % Main.projFrames[projectile.type];
+                projectile.frame = ++projectile.frame % _mainFrames;
 
                 //Making sure projectile is facing correct direction
                 projectile.rotation = projectile.velocity.ToRotation();
@@ -54,16 +59,23 @@ namespace Talismancy.Projectiles
             }
             else
             {
+                //If the projectile was not an active trap last turn, reset the ai fields.
                 if(projectile.ai[1] == 1)
                 {
                     projectile.ai[0] = 0;
                     projectile.ai[1] = 2;
                 }
+
+                //Keep velocity at 0.
                 projectile.velocity.X = 0;
                 projectile.velocity.Y = 0;
-                projectile.frame = 2;
                 projectile.timeLeft = 2;
+
+                //Now keeps track of how long (in frames) the projectile has been set as a trap.
                 projectile.ai[0]++;
+
+                //Increases frame every 2 AI calls (every 2 in-game frames) to the last frame, then stay there.
+                projectile.frame = Math.Min((int)(Math.Floor(projectile.ai[0]/2)) + 18, 22);
             }
         }
 
@@ -82,7 +94,11 @@ namespace Talismancy.Projectiles
 
         public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
         {
+            //If the card has flipped over, then we will finish the animation. This will only be true when the trap is set, so we don't have to worry about that.
+            if(projectile.frame == 22)
+            {
 
+            }
         }
     }
 }
