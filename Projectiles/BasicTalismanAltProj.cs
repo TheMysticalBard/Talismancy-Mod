@@ -10,9 +10,10 @@ namespace Talismancy.Projectiles
     {
         //This is how many frames are in the sprite that correspond to it's movement. The rest are for flipping over once the trap has been activated.
         private const int _mainFrames = 18;
+        private const int _glowFrames = 12;
         public override void SetStaticDefaults()
         {
-            Main.projFrames[projectile.type] = 18;
+            Main.projFrames[projectile.type] = 22;
         }
 
         public override void SetDefaults()
@@ -24,9 +25,9 @@ namespace Talismancy.Projectiles
             //A value of 1 means the AI is currently flying, a value of 2 means it is a readied trap.
             projectile.ai[1] = 1;
 
-            drawOffsetX = -22;
-            drawOriginOffsetX = 14;
-            drawOriginOffsetY = -2;
+            drawOffsetX = -24;
+            drawOriginOffsetX = 12;
+            drawOriginOffsetY = -4;
         }
 
         public override void AI()
@@ -74,8 +75,8 @@ namespace Talismancy.Projectiles
                 //Now keeps track of how long (in frames) the projectile has been set as a trap.
                 projectile.ai[0]++;
 
-                //Increases frame every 2 AI calls (every 2 in-game frames) to the last frame, then stay there.
-                projectile.frame = Math.Min((int)(Math.Floor(projectile.ai[0]/2)) + 18, 22);
+                //Increases frame every 4 AI calls (every 4 in-game frames) to the last frame, then stay there.
+                projectile.frame = Math.Min((int)(Math.Floor(projectile.ai[0]/6)) + 18, 21);
             }
         }
 
@@ -95,9 +96,27 @@ namespace Talismancy.Projectiles
         public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             //If the card has flipped over, then we will finish the animation. This will only be true when the trap is set, so we don't have to worry about that.
-            if(projectile.frame == 22)
+            if(projectile.frame == 21)
             {
-
+                Texture2D glowTexture = mod.GetTexture("Projectiles/BasicTalismanAltProj_Glow");
+                int glowFrameHeight = glowTexture.Height / _glowFrames;
+                int glowFrame = Math.Min((int)(projectile.ai[0]-21) / 10, 11);
+                int startHeight = glowFrameHeight * glowFrame;
+                Rectangle sourceRectangle = new Rectangle(0, startHeight, glowTexture.Width, glowFrameHeight);
+                Vector2 origin = sourceRectangle.Size() * 0.5f;
+                origin.X -= drawOffsetX * 0.5f;
+                spriteBatch.Draw
+                (
+                    glowTexture,
+                    projectile.Center - Main.screenPosition,
+                    sourceRectangle,
+                    Color.White,
+                    projectile.rotation,
+                    origin,
+                    projectile.scale,
+                    SpriteEffects.None,
+                    0f
+                ) ;
             }
         }
     }
